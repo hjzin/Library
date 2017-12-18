@@ -1,0 +1,10 @@
+{% extends "Bookmis/base.html" %}
+{% load staticfiles %}
+{% block title %}书籍丢失{% endblock %}
+
+{% block content %}
+    <div class="col-md-6 col-md-offset-1">
+        <h3>报告成功，请按图书单价缴纳赔偿金</h3>
+        <h4>您的赔偿金额为{{ lost_book.price }}元</h4>
+    </div>
+{% endblock %}

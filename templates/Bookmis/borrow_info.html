@@ -1,0 +1,71 @@
+{% extends "Bookmis/base.html" %}
+{% load staticfiles %}
+{% block title %}我的借阅信息{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="col-md-8 col-md-offset-2">
+                    <h4>已借书数量：{{ user.user.book_num }}</h4>
+                    <h4>允许借书数量：{{ user.user.level.maxbooknum }}</h4>
+
+                 </div>
+                <div class="col-md-10 col-md-offset-1">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>图书编号</th>
+                            <th>书名</th>
+                            <th>借阅日期</th>
+                            <th>归还日期</th>
+                            <th>是否归还</th>
+                            <th>是否丢失</th>
+                            <th>还书</th>
+                            <th>报告书籍丢失</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for myborrow in my_borrow_info %}
+                            <tr>
+                                <td>{{ myborrow.book.bookID }}</td>
+                                <td>{{ myborrow.book.bookname }}</td>
+                                <td>{{ myborrow.dateBorrow }}</td>
+                                <td>{{ myborrow.dateReturn}}</td>
+                                <td>{{ myborrow.isReturn }}</td>
+                                <td>{{ myborrow.isloss }}</td>
+                                <td><a href="{% url 'return_book' %}?id={{ myborrow.book.bookID }}">还书</a></td>
+                                <td><a href="{% url 'book_lost' %}?id={{ myborrow.book.bookID }}">报告书籍丢失</a></td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td>暂无借阅记录</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <nav>
+                        <ul class="pager">
+                            {% if my_borrow_info.has_previous %}
+                                <li class="previous"><a
+                                        href="?page={{ book_list.previous_page_number }}">上一页</a>
+                                </li>
+                            {% else %}
+                                <li class="previous disabled"><a href="#">上一页</a></li>
+                            {% endif %}
+                            第 {{ my_borrow_info.number }} / {{ my_borrow_info.paginator.num_pages }}页
+                            {% if my_borrow_info.has_next %}
+                                <li class="next"><a
+                                        href="?page={{ my_borrow_info.next_page_number }}">下一页</a>
+                                </li>
+                            {% else %}
+                                <li class="next disabled"><a href="#">下一页</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

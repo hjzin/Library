@@ -1,0 +1,83 @@
+{% extends "Bookmis/base.html" %}
+{% load staticfiles %}
+{% block title %}添加图书{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+                {% if state == 'success' %}
+                    <div class="well">
+                        <h2 class="text-success text-center">添加成功</h2>
+                    </div>
+                {% endif %}
+                <form method="post" role="form" class="form-horizontal">
+                    {% csrf_token %}
+                    <h1 class="form-signin-heading text-center">添加图书</h1>
+
+                    <div class="form-group">
+                        <label for="id_bookID" class="col-md-3 control-label">图书编号:</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" id="id_bookID" required name="bookID" autofocus>
+                        </div>
+                     </div>
+
+                    <div class="form-group">
+                        <label for="id_name" class="col-md-3 control-label">书名:</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" id="id_name" required name="bookname">
+                        </div>
+                    </div>
+
+                     <div class="form-group">
+                        <label for="id_categoryID" class="col-md-3 control-label">类别编号:</label>
+                         <div class="col-md-9">
+                             <select  id="id_categoryID" name="categoryID">
+                                  <option value=1>01 计算机</option>
+                                  <option value=2>02 农林</option>
+                                  <option value=3>03 医学</option>
+                                  <option value=4>04 科普</option>
+                                  <option value=5>05 通信</option>
+                                  <option value=6>06 建筑</option>
+                            </select>
+                         </div>
+                     </div>
+
+                     <div class="form-group">
+                        <label for="id_author" class="col-md-3 control-label">作者:</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" id="id_author" required name="author" >
+                        </div>
+                     </div>
+
+                     <div class="form-group">
+                        <label for="id_publishing" class="col-md-3 control-label">出版社:</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" id="id_publishing" required name="publishing" >
+                        </div>
+                     </div>
+
+                    <div class="form-group">
+                        <label for="id_price" class="col-md-3 control-label">单价:</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" id="id_price" required name="price" >
+                        </div>
+                     </div>
+
+                    <div class="form-group">
+                        <label for="id_quantityIN" class="col-md-3 control-label">入库数量:</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" id="id_quantityIN" required name="quantityIN" >
+                        </div>
+                     </div>
+
+                    <div class="form-group">
+                        <div class="col-md-4 col-md-offset-4">
+                            <button type="submit" class="btn btn-primary btn-block" id="id_submit">添加</button>
+                        </div>
+                     </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

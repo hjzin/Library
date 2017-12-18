@@ -1,0 +1,40 @@
+{% extends "Bookmis/base.html" %}
+{% load staticfiles %}
+{% block title %}会员升级{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="col-md-10 col-md-offset-1">
+                     <div class="col-md-8 col-md-offset-2">
+                        <h4>您当前的会员等级为{{ user.user.level.level }}</h4>
+                     </div>
+                    <form>
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>会员等级</th>
+                                <th>会费</th>
+                                <th>最长借阅日期</th>
+                                <th>最大借阅册数</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for levels in level_list %}
+                                <tr>
+                                    <td>{{ levels.level }}</td>
+                                    <td>{{ levels.fee }}元</td>
+                                    <td>{{ levels.days }}</td>
+                                    <td>{{ levels.maxbooknum }}</td>
+                                    <td><a href="{% url 'level_success' %}?new_level={{ levels.level }}">开通</a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

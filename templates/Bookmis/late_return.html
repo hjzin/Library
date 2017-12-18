@@ -1,0 +1,60 @@
+{% extends "Bookmis/base.html" %}
+{% load staticfiles %}
+{% block title %}超期未还书{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="col-md-10 col-md-offset-1">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>用户名</th>
+                            <th>书名</th>
+                            <th>借阅日期</th>
+                            <th>应归还日期</th>
+                            <th>是否丢失</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for borrow in borrow_list %}
+                            <tr>
+                                <td>{{ borrow.reader.user.username }}</td>
+                                <td>{{ borrow.book.bookname }}</td>
+                                <td>{{ borrow.dateBorrow }}</td>
+                                <td>{{ borrow.dateReturn}}</td>
+                                <td>{{ borrow.isloss }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td>暂无超期未还者</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <nav>
+                        <ul class="pager">
+                            {% if my_borrow_info.has_previous %}
+                                <li class="previous"><a
+                                        href="?page={{ book_list.previous_page_number }}">上一页</a>
+                                </li>
+                            {% else %}
+                                <li class="previous disabled"><a href="#">上一页</a></li>
+                            {% endif %}
+                            第 {{ my_borrow_info.number }} / {{ my_borrow_info.paginator.num_pages }}页
+                            {% if my_borrow_info.has_next %}
+                                <li class="next"><a
+                                        href="?page={{ my_borrow_info.next_page_number }}">下一页</a>
+                                </li>
+                            {% else %}
+                                <li class="next disabled"><a href="#">下一页</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

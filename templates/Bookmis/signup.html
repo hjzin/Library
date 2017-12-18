@@ -1,0 +1,94 @@
+{% extends "Bookmis/base.html" %}
+{% load staticfiles %}
+{% block title %}注册{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+                {% if state == 'success' %}
+                    <div class="well">
+                        <h2 class="text-success text-center">办理成功</h2>
+                    </div>
+                {% elif state == 'repeat_error' %}
+                    <div class="well">
+                        <h2 class="text-success text-center">两次密码不一致</h2>
+                    </div>
+                {% elif state == 'empty' %}
+                    <div class="well">
+                        <h2 class="text-success text-center">密码重复错误</h2>
+                    </div>
+                {% elif state == 'user_exist' %}
+                    <div class="well">
+                        <h2 class="text-success text-center">该用户已存在</h2>
+                    </div>
+                {% endif %}
+                <form method="post" role="form" class="form-horizontal">
+                    {% csrf_token %}
+                    <h1 class="form-signin-heading text-center">请输入读者信息</h1>
+                    <div class="form-group">
+                        <label for="id_user_name" class="col-md-3 control-label">用户名:</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" id="id_user_name" required name="username" autofocus>
+                            <span class="help-block">用于登录，可以包括大小写字母和下划线</span>
+                        </div>
+                    </div>
+
+                     <div class="form-group">
+                        <label for="id_passwd" class="col-md-3 control-label">密码:</label>
+                        <div class="col-md-9">
+                            <input type="password" class="form-control" id="id_passwd" required name="password" >
+                        </div>
+                     </div>
+
+                     <div class="form-group">
+                        <label for="id_repasswd" class="col-md-3 control-label">重复密码:</label>
+                        <div class="col-md-9">
+                            <input type="password" class="form-control" id="id_repasswd" required name="repeat_password" >
+                        </div>
+                     </div>
+
+                    <div class="form-group">
+                        <label for="id_email" class="col-md-3 control-label">电子邮件:</label>
+                        <div class="col-md-9">
+                            <input type="email" class="form-control" id="id_email" required name="email" >
+                        </div>
+                     </div>
+
+                    <div class="form-group">
+                        <label for="id_sex" class="col-md-3 control-label">性别:</label>
+                        <div class="col-md-9" >
+                            <label class="radio-inline" for="id_sex">
+                                <input type="radio" id="id_sex" name="sex" value="男" checked>男
+                            </label>
+                            <label class="radio-inline" for="id_sex">
+                                <input type="radio" id="id_sex" name="sex" value="女">女
+                            </label>
+                        </div>
+                     </div>
+
+                    <div class="form-group">
+                        <label for="id_birthday" class="col-md-3 control-label">生日:</label>
+                        <div class="col-md-9">
+                            <input type="date" class="form-control" id="id_birthday" required name="birthday" >
+                        </div>
+                     </div>
+
+                    <div class="form-group">
+                        <label for="id_phone" class="col-md-3 control-label">电话:</label>
+                        <div class="col-md-9">
+                            <input type="tel" class="form-control" id="id_phone" required name="phone" >
+                        </div>
+                     </div>
+
+                    <div class="form-group">
+                        <div class="col-md-4 col-md-offset-4">
+                            <button type="submit" class="btn btn-primary btn-block" id="id_submit">注册</button>
+                        </div>
+                     </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

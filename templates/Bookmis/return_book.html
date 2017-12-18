@@ -1,0 +1,22 @@
+{% extends "Bookmis/base.html" %}
+{% load staticfiles %}
+{% block title %}归还图书{% endblock %}
+
+{% block content %}
+    <div class="col-md-6 col-md-offset-1">
+        {% if state == 'success' %}
+            <div class="col-md-7 col-md-offset-1">
+                <h2>归还成功</h2>
+            </div>
+        {% elif state == 'returned' %}
+            <div class="col-md-7 col-md-offset-1">
+                <h2>该书已被归还</h2>
+            </div>
+        {% endif %}
+    </div>
+    <br>
+    <div class="col-md-3 col-md-offset-1">
+       <h3><a href="{% url 'borrow_info' %}">返回</a></h3>
+    </div>
+
+{% endblock %}
