@@ -39,6 +39,8 @@
                     <li id="borrow"><a href="{% url 'borrow' %}">借阅图书</a></li>
                     <li id="loss_report"><a href="{% url 'loss_report' %}">借书证挂失</a></li>
                     <li id="late_return"><a href="{% url 'late_return' %}">超期未还</a></li>
+                    <li id="view_book"><a href="{% url 'view_book' %}">查看图书</a></li>
+
                {% else %}
                     <li id="view_book"><a href="{% url 'view_book' %}">查看图书</a></li>
                     <li id="borrow_info"><a href="{% url 'borrow_info' %}">我的借阅信息</a></li>
