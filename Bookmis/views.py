@@ -10,6 +10,11 @@ from django.contrib import auth
 from django.core.urlresolvers import reverse
 from Bookmis.utils import permission_check
 from Bookmis.models import *
+from email import encoders
+from email.header import Header
+from email.mime.text import MIMEText
+from email.utils import parseaddr,formataddr
+import smtplib
 # Create your views here.
 
 
@@ -304,7 +309,7 @@ def return_book(request):
         return HttpResponseRedirect(reverse('borrow_info'))
     else:
         returned_book=Book.objects.get(bookID=book_id)
-        my_borrow=Borrow.objects.get(book=returned_book)
+        my_borrow=Borrow.objects.get(book=returned_book,reader=user.user)
         if my_borrow.isReturn == '是':
             state='returned'
             content = {
@@ -341,6 +346,7 @@ def book_lost(request):
     my_borrow.isloss = '是'
     my_borrow.save()
     lost_book.quantityLOSS += 1
+    lost_book.quantityOUT -=1
     lost_book.save()
     user.user.book_num -= 1
     user.user.save()
@@ -406,10 +412,37 @@ def loss_report(request):
 
 
 #超期未还
+def _format_addr(s):
+    name,addr=parseaddr(s)
+    return formataddr((Header(name,'utf-8').encode(),addr))
+
+
+def send_mail(email,username):
+    from_addr = '13021136577@163.com'
+    password = 'vason136'
+    to_addr = email
+    smtp_sever = 'smtp.163.com'
+
+    msg = MIMEText('您好，您有逾期未还的图书，请及时归还！', 'plain', 'utf-8')
+    # 确定收件人发件人与邮件主题
+    msg['From'] = _format_addr('图书管理系统 <%s>' % from_addr)
+    msg['To'] = _format_addr('<%s> <%s>' % (username,to_addr))
+    msg['Subject'] = Header('逾期未还书提醒', 'utf-8').encode()
+    # 使用SMTP协议发送邮件
+    server = smtplib.SMTP(smtp_sever, 25)
+    server.set_debuglevel(1)
+    server.login(from_addr, password)
+    server.sendmail(from_addr, to_addr, msg.as_string())
+    print('邮件已发出')
+    server.quit()
+
+
 def late_return(request):
     now_date=datetime.now().date()
-    borrow_list=Borrow.objects.filter(dateReturn__lte=now_date, isReturn='否')
-
+    borrow_list=Borrow.objects.filter(dateReturn__lte=now_date,isReturn='否')
+    for borrows in borrow_list:
+        email=borrows.reader.user.email
+        send_mail(email,borrows.reader.user.username)
     content={
         'active_menu': 'late_return',
         'borrow_list': borrow_list,
