@@ -417,13 +417,13 @@ def _format_addr(s):
     return formataddr((Header(name,'utf-8').encode(),addr))
 
 
-def send_mail(email,username):
+def send_mail(email,username,bookname):
     from_addr = '13021136577@163.com'
     password = 'vason136'
     to_addr = email
     smtp_sever = 'smtp.163.com'
-
-    msg = MIMEText('您好，您有逾期未还的图书，请及时归还！', 'plain', 'utf-8')
+    message='您好，您有逾期未还的图书，请尽快归还！图书名称:'+bookname
+    msg = MIMEText(message, 'plain', 'utf-8')
     # 确定收件人发件人与邮件主题
     msg['From'] = _format_addr('图书管理系统 <%s>' % from_addr)
     msg['To'] = _format_addr('<%s> <%s>' % (username,to_addr))
@@ -442,7 +442,7 @@ def late_return(request):
     borrow_list=Borrow.objects.filter(dateReturn__lte=now_date,isReturn='否')
     for borrows in borrow_list:
         email=borrows.reader.user.email
-        send_mail(email,borrows.reader.user.username)
+        send_mail(email,borrows.reader.user.username,borrows.book.bookname)
     content={
         'active_menu': 'late_return',
         'borrow_list': borrow_list,
