@@ -110,13 +110,13 @@ def set_password(request):
             elif new_password != repeat_password:
                 state = 'repeat_error'
             else:
-                user.setpassword(new_password)
+                user.set_password(new_password)
                 user.save()
                 state='success'
         else:
             state='password_error'
     content={
-        'active_menu': 'homepage',
+        'active_menu': 'set_password',
         'user': user,
         'state': state,
     }
@@ -394,16 +394,21 @@ def loss_report(request):
     state=None
     if request.method == 'POST':
         username=request.POST.get('username', '')
-        lost_user=User.objects.get(username=username)
-        my_lost_user=MyUser.objects.get(user=lost_user)
-        if my_lost_user.DoesNotExist :
+        try:
+            lost_user=User.objects.get(username=username)
+            my_lost_user=MyUser.objects.get(user=lost_user)
+        except:
             state = 'empty'
-        else:
-            loss=LossReport(reader=my_lost_user)
-            loss.save()
-            my_lost_user.isloss = '是'
-            my_lost_user.save()
-            state='success'
+            content = {
+                'active_menu': 'loss_report',
+                'state': state,
+            }
+            return render(request, 'Bookmis/loss_report.html', content)
+        loss=LossReport(reader=my_lost_user)
+        loss.save()
+        my_lost_user.isloss = '是'
+        my_lost_user.save()
+        state='success'
     content={
         'active_menu': 'loss_report',
         'state': state,
