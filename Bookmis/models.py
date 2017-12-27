@@ -21,7 +21,7 @@ class Book(models.Model):
     bookname=models.CharField(max_length=128)
     author=models.CharField(max_length=128)
     price=models.FloatField()
-    categoryID=models.IntegerField()
+    category=models.ForeignKey('BookCategory')
     publishing=models.CharField(max_length=128)
     dateIN=models.DateField(auto_now_add=True)
     quantityIN=models.IntegerField()
@@ -52,11 +52,11 @@ class Borrow(models.Model):
     isloss=models.CharField(default='否',max_length=3)
     reader=models.ForeignKey(MyUser,related_name='userid')
     book=models.ForeignKey(Book,related_name='bookid')
-    isReturn=models.CharField(max_length=3,default='否')
+    isReturn = models.CharField(max_length=3,default='否')
 
     class META:
         ordering=['readerID']
-        unique_together=("readerID","bookID")
+        unique_together=("reader","book")
 
     def __str__(self):
         return self.reader.user.username

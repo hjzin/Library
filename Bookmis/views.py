@@ -129,12 +129,14 @@ def add_book(request):
     user=request.user
     state=None
     if request.method=='POST':
+        categoryID=request.POST.get('categoryID',0)
+        category=BookCategory.objects.get(categoryID=categoryID)
         new_book=Book(
             bookID=request.POST.get('bookID', ''),
             bookname=request.POST.get('bookname', ''),
             author=request.POST.get('author', ''),
             price=request.POST.get('price', 0),
-            categoryID=request.POST.get('categoryID', 0),
+            category=category,
             publishing=request.POST.get('publishing', ''),
             quantityIN=request.POST.get('quantityIN', 0)
         )
@@ -158,7 +160,7 @@ def view_book(request):
         book_list = Book.objects.all()
     else:
         bookcategory=BookCategory.objects.get(categoryName=query_category)
-        book_list=Book.objects.filter(categoryID=bookcategory.categoryID)
+        book_list=Book.objects.filter(category=bookcategory)
     if request.method == 'POST':
         bkname = request.POST.get('bkname', '')
         bkauthor=request.POST.get('bkauthor', '')
@@ -230,52 +232,61 @@ def borrow(request):
         if book_id == '':
             return HttpResponseRedirect(reverse('homepage'))
         else:
-            book = Book.objects.get(bookID=book_id)
-            if my_user.user.book_num == my_user.user.level.maxbooknum:
-                state = 'max_book'
-                content = {
-                    'state': state,
-                    'active_menu': 'borrow',
-                    'my_user': my_user,
-                }
-                return render(request,'Bookmis/borrow.html',content)
+            try:
+                book = Book.objects.get(bookID=book_id)
+                if my_user.user.book_num == my_user.user.level.maxbooknum:
+                    state = 'max_book'
+                    content = {
+                        'state': state,
+                        'active_menu': 'borrow',
+                        'my_user': my_user,
+                    }
+                    return render(request,'Bookmis/borrow.html',content)
 
-            elif book.quantityOUT  == book.quantityIN:
-                state = 'max_lend'
-                content = {
+                elif book.quantityOUT  == book.quantityIN:
+                    state = 'max_lend'
+                    content = {
+                        'state': state,
+                        'active_menu': 'borrow',
+                        'my_user': my_user,
+                    }
+                    return render(request, 'Bookmis/borrow.html', content)
+                else:
+                    date_now=datetime.now()
+                    if my_user.user.level.level == '普通会员':
+                        return_time=date_now+timedelta(days=30)
+                    elif my_user.user.level.level == '黄金会员':
+                        return_time = date_now + timedelta(days=60)
+                    elif my_user.user.level.level == '钻石会员':
+                        return_time = date_now + timedelta(days=90)
+                    new_borrow=Borrow(
+                        reader=my_user.user,
+                        book=book,
+                        dateReturn=return_time.date(),
+                    )
+                    new_borrow.save()
+                    book.quantityOUT += 1
+                    book.save()
+                    my_user.user.book_num += 1
+                    my_user.user.save()
+                    state='success'
+                    content={
+                        'state':state,
+                        'active_menu': 'borrow',
+                        'my_user': my_user,
+                        'new_borrow': new_borrow,
+                        'book': book,
+                        }
+
+                    return render(request,'Bookmis/borrow.html', content)
+            except:
+                state = 'no_book'
+                content={
                     'state': state,
                     'active_menu': 'borrow',
-                    'my_user': my_user,
                 }
                 return render(request, 'Bookmis/borrow.html', content)
-            else:
-                date_now=datetime.now()
-                if my_user.user.level.level == '普通会员':
-                    return_time=date_now+timedelta(days=30)
-                elif my_user.user.level.level == '黄金会员':
-                    return_time = date_now + timedelta(days=60)
-                elif my_user.user.level.level == '钻石会员':
-                    return_time = date_now + timedelta(days=90)
-                new_borrow=Borrow(
-                    reader=my_user.user,
-                    book=book,
-                    dateReturn=return_time.date(),
-                )
-                new_borrow.save()
-                book.quantityOUT += 1
-                book.save()
-                my_user.user.book_num += 1
-                my_user.user.save()
-                state='success'
-                content={
-                    'state':state,
-                    'active_menu': 'borrow',
-                    'my_user': my_user,
-                    'new_borrow': new_borrow,
-                    'book': book,
-                    }
 
-                return render(request,'Bookmis/borrow.html', content)
     content = {
             'active_menu': 'borrow',
             }
@@ -444,7 +455,7 @@ def send_mail(email,username,bookname):
 
 def late_return(request):
     now_date=datetime.now().date()
-    borrow_list=Borrow.objects.filter(dateReturn__lte=now_date,isReturn='否')
+    borrow_list=Borrow.objects.filter(dateReturn__lte=now_date,isReturn='否',isloss='否')
     for borrows in borrow_list:
         email=borrows.reader.user.email
         send_mail(email,borrows.reader.user.username,borrows.book.bookname)

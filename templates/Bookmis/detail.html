@@ -7,10 +7,10 @@
         <h2 class="text-center">{{ book.bookname }}</h2>
         <br>
         <h3>作者：{{ book.author }}</h3>
-        <h3>类别：{{ book.category }}</h3>
+        <h3>类别：{{ book.category.categoryName }}</h3>
         <h3>出版社：{{ book.publishing }}</h3>
         <h3>价格：{{ book.price|floatformat:2 }}</h3>
-        <h3>馆藏数量：{{ book.quantityIN }}</h3>
+        <h3>入库数量：{{ book.quantityIN }}</h3>
         <h3>借出数量：{{ book.quantityOUT }}</h3>
         <h3>丢失数量：{{ book.quantityLOSS }}</h3>
     </div>
